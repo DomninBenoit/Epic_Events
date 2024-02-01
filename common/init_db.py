@@ -1,4 +1,4 @@
-from .base import Base, engine
+from common.base import Base, engine
 from client_management.model import Client
 from authentication.model import Collaborateur, Role
 from contract_management.model import Contrat
