@@ -6,7 +6,9 @@ class Application:
         "start_menu": MainMenuController.start_menu,
         "login": AuthenticationController.login,
         "main_menu": MainMenuController.display_menu,
+        "collaborateur_management": CollaborateurController.display_collaborateur_menu,
         "create_collaborateur": CollaborateurController.create_collaborateur,
+        "read_collaborateur": CollaborateurController.read_collaborateur,
     }
 
     def __init__(self) -> None:

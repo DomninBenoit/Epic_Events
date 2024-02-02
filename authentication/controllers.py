@@ -59,7 +59,7 @@ class MainMenuController:
             # Logique pour la gestion des événements
             return "events_management", None
         elif choice == '3':
-            # Logique pour afficher les rapports
+            # Logique pour afficher la gestion du collaborateur
             return "collaborateur_management", None
         elif choice.lower() == 'q':
             # Quitter l'application
@@ -70,6 +70,19 @@ class MainMenuController:
 
 
 class CollaborateurController:
+    @classmethod
+    def display_collaborateur_menu(cls, session, input=None):
+        choice = CollaborateurView.display_collaborateur_menu()
+
+        if choice == '1':
+            # Logique pour la gestion des clients
+            return "read_collaborateur", None
+        elif choice.lower() == 'q':
+            # Quitter l'application
+            return "quit", None
+        else:
+            print("Choix invalide, veuillez réessayer.")
+            return "collaborateur_management", None
 
     @classmethod
     def create_collaborateur(cls, session, input=None):
@@ -95,4 +108,16 @@ class CollaborateurController:
         db_session.add(new_collaborateur)
         db_session.commit()
 
-        return "main_menu", None
+        return "start_menu", None
+
+
+    @classmethod
+    def read_collaborateur(cls, session, input=None):
+        db_session = Session()
+
+        user_id = session["user"].id
+        collaborateur = db_session.query(Collaborateur).filter_by(id=user_id).first()
+
+        CollaborateurView.view_profile(collaborateur)
+
+        return "collaborateur_management", None

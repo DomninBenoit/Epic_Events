@@ -44,6 +44,15 @@ class MainMenuView:
 
 class CollaborateurView:
     @staticmethod
+    def display_collaborateur_menu():
+        print("\nGestion des collaborateurs")
+        print("1. Voir profil")
+        print("q. Quitter")
+
+        choice = input("Entrez votre choix : ")
+        return choice
+
+    @staticmethod
     def prompt_for_new_collaborateur():
         print("Créer un nouveau collaborateur")
         nom_utilisateur = input("Nom d'utilisateur: ")
@@ -62,3 +71,11 @@ class CollaborateurView:
             "mot_de_passe": mot_de_passe,
             "role": role
         }
+
+    @staticmethod
+    def view_profile(collaborateur):
+        if collaborateur:
+            # Afficher les informations du collaborateur
+            print(f"ID: {collaborateur.id}, Nom: {collaborateur.nom_utilisateur}, Email: {collaborateur.email}")
+        else:
+            print("Profil non trouvé.")
