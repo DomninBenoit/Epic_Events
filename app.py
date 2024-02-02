@@ -3,16 +3,16 @@ import subprocess as sp
 
 class Application:
     routes = {
-        "start_menu": MainMenuController.start_menu,
         "login": AuthenticationController.login,
         "main_menu": MainMenuController.display_menu,
         "collaborateur_management": CollaborateurController.display_collaborateur_menu,
         "create_collaborateur": CollaborateurController.create_collaborateur,
-        "read_collaborateur": CollaborateurController.read_collaborateur,
+        "update_collaborateur": CollaborateurController.update_collaborateur,
+        "delete_collaborateur": CollaborateurController.delete_collaborateur,
     }
 
     def __init__(self) -> None:
-        self.route = "start_menu"
+        self.route = "login"
         self.exit = False
         self.route_params = None
         self.session = {

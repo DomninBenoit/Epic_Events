@@ -35,20 +35,6 @@ class AuthenticationController:
 class MainMenuController:
 
     @classmethod
-    def start_menu(cls, session, input=None):
-        choice = MainMenuView.display_start_menu()
-
-        if choice == "1":
-            return "create_collaborateur", None
-        elif choice == "2":
-            return "login", None
-        elif choice.lower() == "q":
-            return "quit", None
-        else:
-            print("Choix invalide, veuillez réessayer.")
-            return "start_menu", None
-
-    @classmethod
     def display_menu(cls, session, input=None):
         choice = MainMenuView.display()
 
@@ -72,11 +58,23 @@ class MainMenuController:
 class CollaborateurController:
     @classmethod
     def display_collaborateur_menu(cls, session, input=None):
+        db_session = Session()
+        collaborateurs = db_session.query(Collaborateur).all()
+        CollaborateurView.list_collaborateurs(collaborateurs)
+
         choice = CollaborateurView.display_collaborateur_menu()
 
         if choice == '1':
-            # Logique pour la gestion des clients
-            return "read_collaborateur", None
+            # creation de collaborateur
+            return "create_collaborateur", None
+        elif choice in ['2', '3']:
+            collab_id = CollaborateurView.prompt_for_collaborateur_id()
+            if choice == '2':
+                # Mise à jour de collaborateur
+                return "update_collaborateur", collab_id
+            elif choice == '3':
+                # Suppression de collaborateur
+                return "delete_collaborateur", collab_id
         elif choice.lower() == 'q':
             # Quitter l'application
             return "quit", None
@@ -91,11 +89,11 @@ class CollaborateurController:
         db_session = Session()
 
         role = db_session.query(Role).filter_by(nom=collaborateur_data["role"]).first()
-        print(role)
+
         if role is None:
             print(f"Rôle '{collaborateur_data['role']}' non trouvé.")
             db_session.close()
-            return "start_menu", None
+            return "collaborateur_management", None
 
         new_collaborateur = Collaborateur(
             nom_utilisateur=collaborateur_data["nom_utilisateur"],
@@ -108,16 +106,52 @@ class CollaborateurController:
         db_session.add(new_collaborateur)
         db_session.commit()
 
-        return "start_menu", None
-
+        return "collaborateur_management", None
 
     @classmethod
-    def read_collaborateur(cls, session, input=None):
+    def update_collaborateur(cls, session, collab_id):
         db_session = Session()
 
-        user_id = session["user"].id
-        collaborateur = db_session.query(Collaborateur).filter_by(id=user_id).first()
+        # Rechercher le collaborateur par son ID
+        collaborateur = db_session.query(Collaborateur).filter_by(id=collab_id).first()
+        if not collaborateur:
+            print(f"Aucun collaborateur trouvé avec l'ID {collab_id}")
+            return "collaborateur_management", None
 
-        CollaborateurView.view_profile(collaborateur)
+        # Demander à l'utilisateur les champs à mettre à jour
+        updates = CollaborateurView.prompt_for_updates()
 
+        # Mise à jour des champs spécifiés
+        if 'nom_utilisateur' in updates:
+            collaborateur.nom_utilisateur = updates['nom_utilisateur']
+        if 'email' in updates:
+            collaborateur.email = updates['email']
+        if 'mot_de_passe' in updates:
+            collaborateur.set_mot_de_passe(updates['mot_de_passe'])
+
+        # Enregistrer les modifications
+        db_session.commit()
+        print("Collaborateur mis à jour avec succès.")
+
+        return "collaborateur_management", None
+
+    @classmethod
+    def delete_collaborateur(cls, session, collab_id):
+        db_session = Session()
+
+        # Rechercher le collaborateur par son ID
+        collaborateur = db_session.query(Collaborateur).filter_by(id=collab_id).first()
+        if not collaborateur:
+            print(f"Aucun collaborateur trouvé avec l'ID {collab_id}")
+            return "collaborateur_management", None
+        if CollaborateurView.confirm_delete(collaborateur.nom_utilisateur, collab_id):
+            # Supprimer le collaborateur
+            db_session.delete(collaborateur)
+            # Valider les modifications
+            db_session.commit()
+            print("Collaborateur supprimé avec succès.")
+        else:
+            print("Suppression annulée.")
+
+        db_session.close()
         return "collaborateur_management", None

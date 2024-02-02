@@ -19,17 +19,8 @@ class LoginView:
         # Afficher un message d'erreur si les identifiants sont incorrects
         print("Les identifiants sont incorrects. Veuillez réessayer.")
 
+
 class MainMenuView:
-
-    @staticmethod
-    def display_start_menu():
-        print("\n Epic Event")
-        print("1. Creation collaborateur")
-        print("2. Identification")
-        print("q. Quitter")
-
-        choice = input("Entrez votre choix : ")
-        return choice
 
     @staticmethod
     def display():
@@ -42,11 +33,14 @@ class MainMenuView:
         choice = input("Entrez votre choix : ")
         return choice
 
+
 class CollaborateurView:
     @staticmethod
     def display_collaborateur_menu():
         print("\nGestion des collaborateurs")
-        print("1. Voir profil")
+        print("1. Nouveau collaborateur")
+        print("2. Mise à jour du collaborateur")
+        print("3. Suppression collaborateur")
         print("q. Quitter")
 
         choice = input("Entrez votre choix : ")
@@ -73,9 +67,38 @@ class CollaborateurView:
         }
 
     @staticmethod
-    def view_profile(collaborateur):
-        if collaborateur:
+    def list_collaborateurs(collaborateurs):
+        for collaborateur in collaborateurs:
             # Afficher les informations du collaborateur
             print(f"ID: {collaborateur.id}, Nom: {collaborateur.nom_utilisateur}, Email: {collaborateur.email}")
-        else:
-            print("Profil non trouvé.")
+
+    @staticmethod
+    def prompt_for_collaborateur_id():
+        print("\nEntrer l'ID du collaborateur :")
+        collab_id = input("ID: ")
+        return collab_id
+
+    @staticmethod
+    def prompt_for_updates():
+        updates = {}
+        print("Laisser vide si pas de changement.")
+
+        nom_utilisateur = input("Nouveau nom d'utilisateur: ")
+        if nom_utilisateur:
+            updates['nom_utilisateur'] = nom_utilisateur
+
+        email = input("Nouvel email: ")
+        if email:
+            updates['email'] = email
+
+        mot_de_passe = input("Nouveau mot de passe: ")
+        if mot_de_passe:
+            updates['mot_de_passe'] = mot_de_passe
+
+        return updates
+
+    @staticmethod
+    def confirm_delete(nom_utilisateur, collab_id):
+        confirm = input(
+            f"Êtes-vous sûr de vouloir supprimer le collaborateur {nom_utilisateur} (ID: {collab_id}) ? (oui/non): ")
+        return confirm.lower() == 'oui'
