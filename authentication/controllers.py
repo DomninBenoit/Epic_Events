@@ -40,11 +40,14 @@ class MainMenuController:
 
         if choice == '1':
             # Logique pour la gestion des clients
-            return "clients_management", None
+            return "client_management", None
         elif choice == '2':
+            # Logique pour la gestion des contrats
+            return "contract_management", None
+        elif choice == '3':
             # Logique pour la gestion des événements
             return "events_management", None
-        elif choice == '3':
+        elif choice == '4':
             # Logique pour afficher la gestion du collaborateur
             return "collaborateur_management", None
         elif choice.lower() == 'q':

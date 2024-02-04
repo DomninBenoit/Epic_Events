@@ -1,4 +1,7 @@
 from authentication.controllers import AuthenticationController, MainMenuController, CollaborateurController
+from client_management.controllers import ClientController
+from contract_management.controllers import ContractController
+#from events_management.controllers import EventController
 import subprocess as sp
 
 class Application:
@@ -9,6 +12,13 @@ class Application:
         "create_collaborateur": CollaborateurController.create_collaborateur,
         "update_collaborateur": CollaborateurController.update_collaborateur,
         "delete_collaborateur": CollaborateurController.delete_collaborateur,
+        "client_management": ClientController.display_client_menu,
+        "create_client": ClientController.create_client,
+        "update_client": ClientController.update_client,
+        "delete_client": ClientController.delete_client,
+        "contract_management": ContractController.display_contract_menu,
+        "display_contract_filter_menu": ContractController.display_contract_filter_menu,
+        "create_contract": ContractController.create_contract,
     }
 
     def __init__(self) -> None:

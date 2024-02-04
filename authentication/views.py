@@ -26,8 +26,9 @@ class MainMenuView:
     def display():
         print("\nMenu Principal")
         print("1. Gestion des clients")
-        print("2. Gestion des événements")
-        print("3. Gestion des collaborateurs")
+        print("2. Gestion des contrats")
+        print("3. Gestion des événements")
+        print("4. Gestion des collaborateurs")
         print("q. Quitter")
 
         choice = input("Entrez votre choix : ")
