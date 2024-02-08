@@ -1,7 +1,7 @@
 from authentication.controllers import AuthenticationController, MainMenuController, CollaborateurController
 from client_management.controllers import ClientController
 from contract_management.controllers import ContractController
-#from events_management.controllers import EventController
+from events_management.controllers import EventsController
 import subprocess as sp
 
 class Application:
@@ -19,6 +19,10 @@ class Application:
         "contract_management": ContractController.display_contract_menu,
         "display_contract_filter_menu": ContractController.display_contract_filter_menu,
         "create_contract": ContractController.create_contract,
+        "update_contract": ContractController.update_contract,
+        "delete_contract": ContractController.delete_contract,
+        "event_management": EventsController.display_event_menu,
+        "create_event": EventsController.create_event,
     }
 
     def __init__(self) -> None:

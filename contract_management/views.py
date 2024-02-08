@@ -66,26 +66,22 @@ class ContractView:
         updates = {}
         print("Laisser vide si pas de changement.")
 
-        nom_complet = input("Nouveau nom: ")
-        if nom_complet:
-            updates['nom_complet'] = nom_complet
+        montant_total = input("Nouveau Total: ")
+        if montant_total:
+            updates['montant_total'] = montant_total
 
-        email = input("Nouvel email: ")
-        if email:
-            updates['email'] = email
+        montant_restant = input("Nouveau reste à payer: ")
+        if montant_restant:
+            updates['montant_restant'] = montant_restant
 
-        telephone = input("Nouveau téléphone: ")
-        if telephone:
-            updates['telephone'] = telephone
-
-        nom_entreprise = input("nouveau nom d'entreprise: ")
-        if nom_entreprise:
-            updates['nom_entreprise'] = nom_entreprise
+        statut = input("Nouveau statut: ")
+        if statut:
+            updates['statut'] = statut
 
         return updates
 
     @staticmethod
-    def confirm_delete(nom_complet, client_id):
+    def confirm_delete(contrat, contrat_id):
         confirm = input(
-            f"Êtes-vous sûr de vouloir supprimer le contrat {nom_complet} (ID: {client_id}) ? (oui/non): ")
+            f"Êtes-vous sûr de vouloir supprimer le contrat {contrat} (ID: {contrat_id}) ? (oui/non): ")
         return confirm.lower() == 'oui'
