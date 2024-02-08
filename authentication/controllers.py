@@ -46,7 +46,7 @@ class MainMenuController:
             return "contract_management", None
         elif choice == '3':
             # Logique pour la gestion des événements
-            return "events_management", None
+            return "event_management", None
         elif choice == '4':
             # Logique pour afficher la gestion du collaborateur
             return "collaborateur_management", None

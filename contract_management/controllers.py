@@ -7,6 +7,7 @@ from contract_management.model import Contrat
 from contract_management.views import ContractView
 from client_management.model import Client
 
+
 class ContractController:
     @classmethod
     def display_contract_menu(cls, session, input=None):
@@ -21,7 +22,7 @@ class ContractController:
             return "create_contract", None
         elif choice == '2':
             # sous menu des vues filtrées des contrats
-            return "display_contract_filter_menu"
+            return "display_contract_filter_menu", None
         elif choice in ['3', '4']:
             contract_id = ContractView.prompt_for_contract_id()
             if choice == '3':
@@ -43,10 +44,14 @@ class ContractController:
 
         if choice == '1':
             # Vue filtrée des contrats avec reste à payer
-            return cls.display_filtered_contracts(session, "open_contract")
+            response = cls.display_filtered_contracts(session, "open_contract")
+            print("reste a payer")
+            return response[0], response[1]
         elif choice == '2':
             # Vue filtrée des contrats non signés
-            return cls.display_filtered_contracts(session, "pending_contract")
+            response = cls.display_filtered_contracts(session, "pending_contract")
+            print("non signé")
+            return response[0], response[1]
         elif choice.lower() == 'q':
             # Quitter l'application
             return "quit", None
@@ -57,19 +62,17 @@ class ContractController:
     @classmethod
     def display_filtered_contracts(cls, session, filter_type=None):
         db_session = Session()
-        contracts = []
 
         if filter_type == "open_contract":
             contracts = db_session.query(Contrat).filter(Contrat.montant_restant > 0).all()
         elif filter_type == "pending_contract":
-            contracts = db_session.query(Contrat).filter(Contrat.statut == "Pending").all()
+            contracts = db_session.query(Contrat).filter(Contrat.statut == "non signé").all()
         else:
             contracts = db_session.query(Contrat).all()
 
         ContractView.list_contracts(contracts)
         db_session.close()
-        # Assurez-vous de retourner un tuple de deux éléments ici
-        return "contract_management", None
+        return "display_contract_filter_menu", None
 
     @classmethod
     def create_contract(cls, session, input=None):
@@ -108,51 +111,49 @@ class ContractController:
         return "contract_management", None
 
     @classmethod
-    def update_client(cls, session, client_id):
+    def update_contract(cls, session, contrat_id):
         db_session = Session()
 
-        # Rechercher le client par son ID
-        client = db_session.query(Client).filter_by(id=client_id).first()
-        if not client:
-            print(f"Aucun client trouvé avec l'ID {client_id}")
-            return "client_management", None
+        # Rechercher le contrat par son ID
+        contrat = db_session.query(Contrat).filter_by(id=contrat_id).first()
+        if not contrat:
+            print(f"Aucun client trouvé avec l'ID {contrat_id}")
+            return "contract_management", None
 
         # Demander à l'utilisateur les champs à mettre à jour
-        updates = ClientView.prompt_for_updates()
+        updates = ContractView.prompt_for_updates()
 
         # Mise à jour des champs spécifiés
-        if 'nom_complet' in updates:
-            client.nom_complet = updates['nom_complet']
-        if 'email' in updates:
-            client.email = updates['email']
-        if 'telephone' in updates:
-            client.telephone = updates['telephone']
-        if 'nom_entreprise' in updates:
-            client.nom_entreprise = updates['nom_entreprise']
+        if 'montant_total' in updates:
+            contrat.montant_total = updates['montant_total']
+        if 'montant_restant' in updates:
+            contrat.montant_restant = updates['montant_restant']
+        if 'statut' in updates:
+            contrat.statut = updates['statut']
 
         # Enregistrer les modifications
         db_session.commit()
-        print("Client mis à jour avec succès.")
+        print("Contrat mis à jour avec succès.")
 
-        return "client_management", None
+        return "contract_management", None
 
     @classmethod
-    def delete_client(cls, session, client_id):
+    def delete_contract(cls, session, contrat_id):
         db_session = Session()
 
         # Rechercher le client par son ID
-        client = db_session.query(Client).filter_by(id=client_id).first()
-        if not client:
-            print(f"Aucun client trouvé avec l'ID {client_id}")
+        contrat = db_session.query(Contrat).filter_by(id=contrat_id).first()
+        if not contrat:
+            print(f"Aucun contrat trouvé avec l'ID {contrat_id}")
             return "client_management", None
-        if ClientView.confirm_delete(client.nom_complet, client_id):
+        if ContractView.confirm_delete(contrat, contrat_id):
             # Supprimer le client
-            db_session.delete(client)
+            db_session.delete(contrat)
             # Valider les modifications
             db_session.commit()
-            print("Client supprimé avec succès.")
+            print("Contrat supprimé avec succès.")
         else:
             print("Suppression annulée.")
 
         db_session.close()
-        return "client_management", None
+        return "contract_management", None
