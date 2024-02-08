@@ -43,12 +43,10 @@ class ContractController:
 
         if choice == '1':
             # Vue filtrée des contrats avec reste à payer
-            response = cls.display_filtered_contracts(session, "open_contract")
-            return response[0], response[1]
+            return cls.display_filtered_contracts(session, "open_contract")
         elif choice == '2':
             # Vue filtrée des contrats non signés
-            response = cls.display_filtered_contracts(session, "pending_contract")
-            return response[0], response[1]
+            return cls.display_filtered_contracts(session, "pending_contract")
         elif choice.lower() == 'q':
             # Quitter l'application
             return "quit", None
@@ -59,6 +57,7 @@ class ContractController:
     @classmethod
     def display_filtered_contracts(cls, session, filter_type=None):
         db_session = Session()
+        contracts = []
 
         if filter_type == "open_contract":
             contracts = db_session.query(Contrat).filter(Contrat.montant_restant > 0).all()
@@ -69,6 +68,7 @@ class ContractController:
 
         ContractView.list_contracts(contracts)
         db_session.close()
+        # Assurez-vous de retourner un tuple de deux éléments ici
         return "contract_management", None
 
     @classmethod
