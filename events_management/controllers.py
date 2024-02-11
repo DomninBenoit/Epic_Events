@@ -40,17 +40,17 @@ class EventsController:
             return "event_management", None
 
     @classmethod
-    def display_contract_filter_menu(cls, session, input=None):
-        choice = ContractView.display_contract_filter_menu()
+    def display_event_filter_menu(cls, session, input=None):
+        choice = EventsView.display_event_filter_menu()
 
         if choice == '1':
             # Vue filtrée des contrats avec reste à payer
-            response = cls.display_filtered_contracts(session, "open_contract")
+            response = cls.display_filtered_events(session, "open_contract")
             print("reste a payer")
             return response[0], response[1]
         elif choice == '2':
             # Vue filtrée des contrats non signés
-            response = cls.display_filtered_contracts(session, "pending_contract")
+            response = cls.display_filtered_events(session, "pending_contract")
             print("non signé")
             return response[0], response[1]
         elif choice.lower() == 'q':
@@ -58,22 +58,22 @@ class EventsController:
             return "quit", None
         else:
             print("Choix invalide, veuillez réessayer.")
-            return "contract_management", None
+            return "event_management", None
 
     @classmethod
-    def display_filtered_contracts(cls, session, filter_type=None):
+    def display_filtered_events(cls, session, filter_type=None):
         db_session = Session()
 
         if filter_type == "open_contract":
-            contracts = db_session.query(Contrat).filter(Contrat.montant_restant > 0).all()
+            events = db_session.query(Evenement).filter(Contrat.montant_restant > 0).all()
         elif filter_type == "pending_contract":
-            contracts = db_session.query(Contrat).filter(Contrat.statut == "non signé").all()
+            events = db_session.query(Evenement).filter(Contrat.statut == "non signé").all()
         else:
-            contracts = db_session.query(Contrat).all()
+            events = db_session.query(Evenement).all()
 
-        ContractView.list_contracts(contracts)
+        EventsView.list_events(events)
         db_session.close()
-        return "display_contract_filter_menu", None
+        return "display_event_filter_menu", None
 
     @classmethod
     def create_event(cls, session, input=None):
@@ -114,49 +114,53 @@ class EventsController:
         return "event_management", None
 
     @classmethod
-    def update_contract(cls, session, contrat_id):
+    def update_event(cls, session, event_id):
         db_session = Session()
 
-        # Rechercher le contrat par son ID
-        contrat = db_session.query(Contrat).filter_by(id=contrat_id).first()
-        if not contrat:
-            print(f"Aucun client trouvé avec l'ID {contrat_id}")
+        # Rechercher l'evenement par son ID
+        event = db_session.query(Evenement).filter_by(id=event_id).first()
+        if not event:
+            print(f"Aucun evenement trouvé avec l'ID {event_id}")
             return "contract_management", None
 
         # Demander à l'utilisateur les champs à mettre à jour
-        updates = ContractView.prompt_for_updates()
+        updates = EventsView.prompt_for_updates()
 
         # Mise à jour des champs spécifiés
-        if 'montant_total' in updates:
-            contrat.montant_total = updates['montant_total']
-        if 'montant_restant' in updates:
-            contrat.montant_restant = updates['montant_restant']
-        if 'statut' in updates:
-            contrat.statut = updates['statut']
+        if 'date_debut' in updates:
+            event.date_debut = updates['date_debut']
+        if 'date_fin' in updates:
+            event.date_fin = updates['date_fin']
+        if 'lieu' in updates:
+            event.lieu = updates['lieu']
+        if 'nombre_participants' in updates:
+            event.nombre_participants = updates['nombre_participants']
+        if 'notes' in updates:
+            event.notes = updates['notes']
 
         # Enregistrer les modifications
         db_session.commit()
-        print("Contrat mis à jour avec succès.")
+        print("Evenement mis à jour avec succès.")
 
-        return "contract_management", None
+        return "event_management", None
 
     @classmethod
-    def delete_contract(cls, session, contrat_id):
+    def delete_event(cls, session, event_id):
         db_session = Session()
 
-        # Rechercher le client par son ID
-        contrat = db_session.query(Contrat).filter_by(id=contrat_id).first()
-        if not contrat:
-            print(f"Aucun contrat trouvé avec l'ID {contrat_id}")
+        # Rechercher l'event par son ID
+        event = db_session.query(Evenement).filter_by(id=event_id).first()
+        if not event:
+            print(f"Aucun contrat trouvé avec l'ID {event_id}")
             return "client_management", None
-        if ContractView.confirm_delete(contrat, contrat_id):
-            # Supprimer le client
-            db_session.delete(contrat)
+        if EventsView.confirm_delete(event, event_id):
+            # Supprimer l'event
+            db_session.delete(event)
             # Valider les modifications
             db_session.commit()
-            print("Contrat supprimé avec succès.")
+            print("Event supprimé avec succès.")
         else:
             print("Suppression annulée.")
 
         db_session.close()
-        return "contract_management", None
+        return "event_management", None

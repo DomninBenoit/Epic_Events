@@ -120,6 +120,10 @@ class ContractController:
             print(f"Aucun client trouvé avec l'ID {contrat_id}")
             return "contract_management", None
 
+        if session["user"].id != contrat.contact_commercial_id:
+            print("commercial non associé")
+            return "contract_management", None
+
         # Demander à l'utilisateur les champs à mettre à jour
         updates = ContractView.prompt_for_updates()
 

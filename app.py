@@ -23,6 +23,8 @@ class Application:
         "delete_contract": ContractController.delete_contract,
         "event_management": EventsController.display_event_menu,
         "create_event": EventsController.create_event,
+        "update_event": EventsController.update_event,
+        "delete_event": EventsController.delete_event,
     }
 
     def __init__(self) -> None:

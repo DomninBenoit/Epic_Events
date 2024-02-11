@@ -72,22 +72,30 @@ class EventsView:
         updates = {}
         print("Laisser vide si pas de changement.")
 
-        montant_total = input("Nouveau Total: ")
-        if montant_total:
-            updates['montant_total'] = montant_total
+        date_debut = input("Nouvelle date de début: ")
+        if date_debut:
+            updates['date_debut'] = date_debut
 
-        montant_restant = input("Nouveau reste à payer: ")
-        if montant_restant:
-            updates['montant_restant'] = montant_restant
+        date_fin = input("Nouvelle date de fin: ")
+        if date_fin:
+            updates['date_fin'] = date_fin
 
-        statut = input("Nouveau statut: ")
-        if statut:
-            updates['statut'] = statut
+        lieu = input("Nouveau lieu: ")
+        if lieu:
+            updates['lieu'] = lieu
+
+        nombre_participants = input("Nouveau nombre de participant: ")
+        if nombre_participants:
+            updates['nombre_participants'] = nombre_participants
+
+        notes = input("Nouvelles notes: ")
+        if notes:
+            updates['notes'] = notes
 
         return updates
 
     @staticmethod
-    def confirm_delete(contrat, contrat_id):
+    def confirm_delete(event, event_id):
         confirm = input(
-            f"Êtes-vous sûr de vouloir supprimer le contrat {contrat} (ID: {contrat_id}) ? (oui/non): ")
+            f"Êtes-vous sûr de vouloir supprimer l'evenement' {event} (ID: {event_id}) ? (oui/non): ")
         return confirm.lower() == 'oui'
