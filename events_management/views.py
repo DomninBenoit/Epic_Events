@@ -95,6 +95,16 @@ class EventsView:
         return updates
 
     @staticmethod
+    def prompt_for_support_updates():
+        update = {}
+        print("Laisser vide si pas de changement.")
+
+        contact_support_id = input("Nouveau contact support: ")
+        if contact_support_id:
+            update['contact_support_id'] = contact_support_id
+        return update
+
+    @staticmethod
     def confirm_delete(event, event_id):
         confirm = input(
             f"Êtes-vous sûr de vouloir supprimer l'evenement' {event} (ID: {event_id}) ? (oui/non): ")

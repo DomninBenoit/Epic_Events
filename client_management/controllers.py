@@ -13,10 +13,10 @@ class ClientController:
 
         choice = ClientView.display_client_menu()
 
-        if choice == '1':
+        if choice == '1' and session['user'].role_id == 2:
             # creation de client
             return "create_client", None
-        elif choice in ['2', '3']:
+        elif choice in ['2', '3'] and session['user'].role_id == 2:
             client_id = ClientView.prompt_for_client_id()
             if choice == '2':
                 # Mise à jour de client
@@ -28,7 +28,10 @@ class ClientController:
             # Quitter l'application
             return "quit", None
         else:
-            print("Choix invalide, veuillez réessayer.")
+            if choice != 'q':
+                print("Accès non autorisé.")
+            else:
+                print("Choix invalide, veuillez réessayer.")
             return "client_management", None
 
     @classmethod
@@ -69,22 +72,25 @@ class ClientController:
             print(f"Aucun client trouvé avec l'ID {client_id}")
             return "client_management", None
 
-        # Demander à l'utilisateur les champs à mettre à jour
-        updates = ClientView.prompt_for_updates()
+        if client.contact_commercial_id == session['user'].id:
+            # Demander à l'utilisateur les champs à mettre à jour
+            updates = ClientView.prompt_for_updates()
 
-        # Mise à jour des champs spécifiés
-        if 'nom_complet' in updates:
-            client.nom_complet = updates['nom_complet']
-        if 'email' in updates:
-            client.email = updates['email']
-        if 'telephone' in updates:
-            client.telephone = updates['telephone']
-        if 'nom_entreprise' in updates:
-            client.nom_entreprise = updates['nom_entreprise']
+            # Mise à jour des champs spécifiés
+            if 'nom_complet' in updates:
+                client.nom_complet = updates['nom_complet']
+            if 'email' in updates:
+                client.email = updates['email']
+            if 'telephone' in updates:
+                client.telephone = updates['telephone']
+            if 'nom_entreprise' in updates:
+                client.nom_entreprise = updates['nom_entreprise']
 
-        # Enregistrer les modifications
-        db_session.commit()
-        print("Client mis à jour avec succès.")
+            # Enregistrer les modifications
+            db_session.commit()
+            print("Client mis à jour avec succès.")
+        else:
+            print('Impossible de modifier un client qui ne vous est pas associé !')
 
         return "client_management", None
 
@@ -97,14 +103,17 @@ class ClientController:
         if not client:
             print(f"Aucun client trouvé avec l'ID {client_id}")
             return "client_management", None
-        if ClientView.confirm_delete(client.nom_complet, client_id):
-            # Supprimer le client
-            db_session.delete(client)
-            # Valider les modifications
-            db_session.commit()
-            print("Client supprimé avec succès.")
+        if client.contact_commercial_id == session['user'].id:
+            if ClientView.confirm_delete(client.nom_complet, client_id):
+                # Supprimer le client
+                db_session.delete(client)
+                # Valider les modifications
+                db_session.commit()
+                print("Client supprimé avec succès.")
+            else:
+                print("Suppression annulée.")
         else:
-            print("Suppression annulée.")
+            print('Impossible de supprimer un client qui ne vous est pas associé !')
 
         db_session.close()
         return "client_management", None

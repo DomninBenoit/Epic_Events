@@ -1,12 +1,9 @@
-import datetime
-from decimal import Decimal
-
+from datetime import datetime
 from authentication.model import Collaborateur
 from common.base import Session
 from contract_management.model import Contrat
 from events_management.model import Evenement
 from events_management.views import EventsView
-from client_management.model import Client
 
 
 class EventsController:
@@ -18,17 +15,20 @@ class EventsController:
 
         choice = EventsView.display_event_menu()
 
-        if choice == '1':
+        if choice == '1' and session['user'].role_id == 2:
             # creation d'un evenement
             return "create_event", None
         elif choice == '2':
             # sous menu des vues filtrées des evenements
-            return "display_event_filter_menu", None
-        elif choice in ['3', '4']:
+            return "display_filtered_events", None
+        elif choice in ['3', '4'] and session['user'].role_id in [1, 3]:
             event_id = EventsView.prompt_for_event_id()
             if choice == '3':
-                # Mise à jour de l'evenement
-                return "update_event", event_id
+                if session['user'].role_id == 3:
+                    # Mise à jour de l'evenement
+                    return "update_event", event_id
+                elif session['user'].role_id == 1:
+                    return "update_support_event", event_id
             elif choice == '4':
                 # Suppression de l'evenement
                 return "delete_event", event_id
@@ -36,44 +36,27 @@ class EventsController:
             # Quitter l'application
             return "quit", None
         else:
-            print("Choix invalide, veuillez réessayer.")
+            if choice in ['3', '4']:
+                print("Accès non autorisé.")
+            else:
+                print("Choix invalide, veuillez réessayer.")
             return "event_management", None
 
     @classmethod
-    def display_event_filter_menu(cls, session, input=None):
-        choice = EventsView.display_event_filter_menu()
-
-        if choice == '1':
-            # Vue filtrée des contrats avec reste à payer
-            response = cls.display_filtered_events(session, "open_contract")
-            print("reste a payer")
-            return response[0], response[1]
-        elif choice == '2':
-            # Vue filtrée des contrats non signés
-            response = cls.display_filtered_events(session, "pending_contract")
-            print("non signé")
-            return response[0], response[1]
-        elif choice.lower() == 'q':
-            # Quitter l'application
-            return "quit", None
-        else:
-            print("Choix invalide, veuillez réessayer.")
-            return "event_management", None
-
-    @classmethod
-    def display_filtered_events(cls, session, filter_type=None):
+    def display_filtered_events(cls, session, inputs=None):
         db_session = Session()
+        user_id = session['user'].id
+        user_role_id = session['user'].role_id
 
-        if filter_type == "open_contract":
-            events = db_session.query(Evenement).filter(Contrat.montant_restant > 0).all()
-        elif filter_type == "pending_contract":
-            events = db_session.query(Evenement).filter(Contrat.statut == "non signé").all()
-        else:
-            events = db_session.query(Evenement).all()
+        if user_role_id == 3:
+            events = db_session.query(Evenement).filter(Evenement.contact_support_id == user_id).all()
+        elif user_role_id == 1:
+            events = db_session.query(Evenement).filter(Evenement.contact_support_id == "").all()
 
         EventsView.list_events(events)
-        db_session.close()
-        return "display_event_filter_menu", None
+        input("Appuyez sur Entrée pour continuer...")
+
+        return "event_management", None
 
     @classmethod
     def create_event(cls, session, input=None):
@@ -85,6 +68,12 @@ class EventsController:
         contrat = db_session.query(Contrat).filter_by(id=event_data["contrat_id"]).first()
         if not contrat:
             print(f"Aucun contrat trouvé avec l'ID {event_data['contrat_id']}")
+            db_session.close()
+            return "event_management", None
+
+        # Vérifiez que le contrat est associé au collaborateur connecté
+        if contrat.contact_commercial_id != session['user'].id:
+            print("Ce contrat n'est pas associé à votre compte.")
             db_session.close()
             return "event_management", None
 
@@ -118,9 +107,9 @@ class EventsController:
         db_session = Session()
 
         # Rechercher l'evenement par son ID
-        event = db_session.query(Evenement).filter_by(id=event_id).first()
+        event = db_session.query(Evenement).filter_by(id=event_id, contact_support_id=session['user'].id).first()
         if not event:
-            print(f"Aucun evenement trouvé avec l'ID {event_id}")
+            print(f"Aucun evenement trouvé avec l'ID {event_id} associé à votre compte.")
             return "contract_management", None
 
         # Demander à l'utilisateur les champs à mettre à jour
@@ -128,9 +117,9 @@ class EventsController:
 
         # Mise à jour des champs spécifiés
         if 'date_debut' in updates:
-            event.date_debut = updates['date_debut']
+            event.date_debut = datetime.strptime(updates['date_debut'], '%Y-%m-%d %H:%M')
         if 'date_fin' in updates:
-            event.date_fin = updates['date_fin']
+            event.date_fin = datetime.strptime(updates['date_fin'], '%Y-%m-%d %H:%M')
         if 'lieu' in updates:
             event.lieu = updates['lieu']
         if 'nombre_participants' in updates:
@@ -141,6 +130,27 @@ class EventsController:
         # Enregistrer les modifications
         db_session.commit()
         print("Evenement mis à jour avec succès.")
+
+        return "event_management", None
+
+    @classmethod
+    def update_support_event(cls, session, event_id):
+        db_session = Session()
+
+        # Rechercher l'evenement par son ID
+        event = db_session.query(Evenement).filter_by(id=event_id).first()
+        if not event:
+            print(f"Aucun evenement trouvé avec l'ID {event_id}.")
+            return "contract_management", None
+
+        update = EventsView.prompt_for_support_updates()
+
+        if 'contact_support_id' in update:
+            event.contact_support_id = update['contact_support_id']
+
+        # Enregistrer les modifications
+        db_session.commit()
+        print("Contact Support mis à jour avec succès.")
 
         return "event_management", None
 

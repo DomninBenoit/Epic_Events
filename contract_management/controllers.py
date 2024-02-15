@@ -17,13 +17,13 @@ class ContractController:
 
         choice = ContractView.display_contract_menu()
 
-        if choice == '1':
+        if choice == '1' and session['user'].id == 1:
             # creation de contrat
             return "create_contract", None
-        elif choice == '2':
+        elif choice == '2' and session['user'].id == 2:
             # sous menu des vues filtrées des contrats
             return "display_contract_filter_menu", None
-        elif choice in ['3', '4']:
+        elif choice in ['3', '4'] and session['user'].id in [1, 2]:
             contract_id = ContractView.prompt_for_contract_id()
             if choice == '3':
                 # Mise à jour du contrat
@@ -35,7 +35,10 @@ class ContractController:
             # Quitter l'application
             return "quit", None
         else:
-            print("Choix invalide, veuillez réessayer.")
+            if choice == 2:
+                print("Accès non autorisé.")
+            else:
+                print("Choix invalide, veuillez réessayer.")
             return "contract_management", None
 
     @classmethod
@@ -45,12 +48,10 @@ class ContractController:
         if choice == '1':
             # Vue filtrée des contrats avec reste à payer
             response = cls.display_filtered_contracts(session, "open_contract")
-            print("reste a payer")
             return response[0], response[1]
         elif choice == '2':
             # Vue filtrée des contrats non signés
             response = cls.display_filtered_contracts(session, "pending_contract")
-            print("non signé")
             return response[0], response[1]
         elif choice.lower() == 'q':
             # Quitter l'application
@@ -150,6 +151,11 @@ class ContractController:
         if not contrat:
             print(f"Aucun contrat trouvé avec l'ID {contrat_id}")
             return "client_management", None
+
+        if session["user"].id != contrat.contact_commercial_id:
+            print("commercial non associé")
+            return "contract_management", None
+
         if ContractView.confirm_delete(contrat, contrat_id):
             # Supprimer le client
             db_session.delete(contrat)

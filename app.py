@@ -4,6 +4,7 @@ from contract_management.controllers import ContractController
 from events_management.controllers import EventsController
 import subprocess as sp
 
+
 class Application:
     routes = {
         "login": AuthenticationController.login,
@@ -22,8 +23,10 @@ class Application:
         "update_contract": ContractController.update_contract,
         "delete_contract": ContractController.delete_contract,
         "event_management": EventsController.display_event_menu,
+        "display_filtered_events": EventsController.display_filtered_events,
         "create_event": EventsController.create_event,
         "update_event": EventsController.update_event,
+        "update_support_event": EventsController.update_support_event,
         "delete_event": EventsController.delete_event,
     }
 

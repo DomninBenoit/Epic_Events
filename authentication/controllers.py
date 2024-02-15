@@ -47,14 +47,17 @@ class MainMenuController:
         elif choice == '3':
             # Logique pour la gestion des événements
             return "event_management", None
-        elif choice == '4':
+        elif choice == '4' and session['user'].role_id == 1:
             # Logique pour afficher la gestion du collaborateur
             return "collaborateur_management", None
         elif choice.lower() == 'q':
             # Quitter l'application
             return "quit", None
         else:
-            print("Choix invalide, veuillez réessayer.")
+            if choice == '4':
+                print("Accès non autorisé.")
+            else:
+                print("Choix invalide, veuillez réessayer.")
             return "main_menu", None
 
 
