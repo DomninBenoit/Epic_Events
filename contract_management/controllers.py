@@ -31,11 +31,13 @@ class ContractController:
             elif choice == '4':
                 # Suppression du contrat
                 return "delete_contract", contract_id
+        elif choice.lower() == 'a':
+            return "main_menu", None
         elif choice.lower() == 'q':
             # Quitter l'application
             return "quit", None
         else:
-            if choice == 2:
+            if choice != 'q' or choice != 'a':
                 print("Accès non autorisé.")
             else:
                 print("Choix invalide, veuillez réessayer.")
@@ -53,6 +55,8 @@ class ContractController:
             # Vue filtrée des contrats non signés
             response = cls.display_filtered_contracts(session, "pending_contract")
             return response[0], response[1]
+        elif choice.lower() == 'a':
+            return "main_menu", None
         elif choice.lower() == 'q':
             # Quitter l'application
             return "quit", None

@@ -32,11 +32,13 @@ class EventsController:
             elif choice == '4':
                 # Suppression de l'evenement
                 return "delete_event", event_id
+        elif choice.lower() == 'a':
+            return "main_menu", None
         elif choice.lower() == 'q':
             # Quitter l'application
             return "quit", None
         else:
-            if choice in ['3', '4']:
+            if choice in ['1', '3', '4']:
                 print("Accès non autorisé.")
             else:
                 print("Choix invalide, veuillez réessayer.")

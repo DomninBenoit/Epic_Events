@@ -24,11 +24,13 @@ class ClientController:
             elif choice == '3':
                 # Suppression de client
                 return "delete_client", client_id
+        elif choice.lower() == 'a':
+            return "main_menu", None
         elif choice.lower() == 'q':
             # Quitter l'application
             return "quit", None
         else:
-            if choice != 'q':
+            if choice != 'q' or choice != 'a':
                 print("Accès non autorisé.")
             else:
                 print("Choix invalide, veuillez réessayer.")

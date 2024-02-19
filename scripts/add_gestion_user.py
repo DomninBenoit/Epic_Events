@@ -11,8 +11,8 @@ role_gestion = Role(nom="gestion")
 
 # Créer un nouveau collaborateur
 nouveau_collaborateur = Collaborateur(
-    nom_utilisateur='domnin',
-    email='domnin@example.com',
+    nom_utilisateur='admin',
+    email='admin@admin.fr',
     role_id=role_gestion.id
 )
 

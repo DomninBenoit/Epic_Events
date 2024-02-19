@@ -5,6 +5,7 @@ class ClientView:
         print("1. Nouveau client")
         print("2. Mise à jour du client")
         print("3. Suppression client")
+        print("a. Menu principal")
         print("q. Quitter")
 
         choice = input("Entrez votre choix : ")

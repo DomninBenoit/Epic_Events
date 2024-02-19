@@ -42,6 +42,7 @@ class CollaborateurView:
         print("1. Nouveau collaborateur")
         print("2. Mise à jour du collaborateur")
         print("3. Suppression collaborateur")
+        print("a. Menu principal")
         print("q. Quitter")
 
         choice = input("Entrez votre choix : ")

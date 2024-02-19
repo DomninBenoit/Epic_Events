@@ -9,6 +9,7 @@ class EventsView:
         print("2. Menu des evenement filtrés")
         print("3. Mise à jour de l'evenement")
         print("4. Suppression evenement")
+        print("a. Menu principal")
         print("q. Quitter")
 
         choice = input("Entrez votre choix : ")
@@ -19,6 +20,7 @@ class EventsView:
         print("\nVues filtrées des evenements")
         print("1. Contrats non soldés")
         print("2. Contrats non signés")
+        print("a. Menu principal")
         print("q. Quitter")
 
         choice = input("Entrez votre choix : ")

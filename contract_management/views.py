@@ -6,6 +6,7 @@ class ContractView:
         print("2. Menu des contrats filtrés")
         print("3. Mise à jour du contrat")
         print("4. Suppression contrat")
+        print("a. Menu principal")
         print("q. Quitter")
 
         choice = input("Entrez votre choix : ")
@@ -16,6 +17,7 @@ class ContractView:
         print("\nVues filtrées des contrats")
         print("1. Contrats non soldés")
         print("2. Contrats non signés")
+        print("a. Menu principal")
         print("q. Quitter")
 
         choice = input("Entrez votre choix : ")

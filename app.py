@@ -3,6 +3,15 @@ from client_management.controllers import ClientController
 from contract_management.controllers import ContractController
 from events_management.controllers import EventsController
 import subprocess as sp
+import sentry_sdk
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+sentry_sdk.init(
+    dsn=os.getenv("SENTRY_DSN"),
+    enable_tracing=True, )
 
 
 class Application:
@@ -30,6 +39,8 @@ class Application:
         "delete_event": EventsController.delete_event,
     }
 
+
+
     def __init__(self) -> None:
         self.route = "login"
         self.exit = False
@@ -37,7 +48,6 @@ class Application:
         self.session = {
             "user": None
         }
-
 
     def run(self):
         while not self.exit:
