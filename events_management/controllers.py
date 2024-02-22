@@ -112,7 +112,7 @@ class EventsController:
         event = db_session.query(Evenement).filter_by(id=event_id, contact_support_id=session['user'].id).first()
         if not event:
             print(f"Aucun evenement trouvé avec l'ID {event_id} associé à votre compte.")
-            return "contract_management", None
+            return "event_management", None
 
         # Demander à l'utilisateur les champs à mettre à jour
         updates = EventsView.prompt_for_updates()

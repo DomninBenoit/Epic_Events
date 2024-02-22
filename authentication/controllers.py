@@ -12,10 +12,6 @@ class AuthenticationController:
 
         # Créer une session SQLAlchemy pour interroger la base de données
         db_session = Session()
-        try:
-            raise Exception('test erreur')
-        except Exception :
-            print("erreur")
 
         # Rechercher l'utilisateur par son email (ou nom d'utilisateur)
         user = db_session.query(Collaborateur).filter_by(email=credentials["email"]).first()

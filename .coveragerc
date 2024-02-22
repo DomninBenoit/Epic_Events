@@ -1,0 +1,7 @@
+[run]
+source =
+    Epic_Events
+omit =
+    */tests/*
+    */.venv/*
+    */site-packages/*
